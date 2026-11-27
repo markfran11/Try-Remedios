@@ -3,7 +3,7 @@ import { say } from "../utils/promotionMessages";
 import PromotionModal from "./PromotionModal";
 import PromotionConfirmModal from "./PromotionConfirmModal";
 import PromotionProductPicker from "./PromotionProductPicker";
-import { validate } from "../utils/promotionRules";
+import { day, validate } from "../utils/promotionRules";
 
 // Create popup: the owner fills in the promotion, then it goes to the page to be saved.
 const PromotionFormContainer = ({ products, promotions, error, onError, onReview, onClose }) => {
@@ -15,6 +15,9 @@ const PromotionFormContainer = ({ products, promotions, error, onError, onReview
   const [type, setType] = useState("percent");
   const [value, setValue] = useState("");
   const [code, setCode] = useState("");
+  const [startDate, setStartDate] = useState(day(0));
+  const [endDate, setEndDate] = useState(day(30));
+  const [usageLimit, setUsageLimit] = useState("0");
 
   const voucher = kind === "voucher";
 
@@ -31,7 +34,7 @@ const PromotionFormContainer = ({ products, promotions, error, onError, onReview
 
   // Closing: clicking the dark background does nothing, and closing a form with unsaved
   // changes (X, Cancel or Esc) asks first, so a wrong tap does not wipe what was typed.
-  const snapshot = JSON.stringify({ name, kind, cat, ids, type, value, code });
+  const snapshot = JSON.stringify({ name, kind, cat, ids, type, value, code, startDate, endDate, usageLimit });
   const [savedSnapshot] = useState(snapshot);   // the values when the form opened
   const [askDiscard, setAskDiscard] = useState(false);
   const requestClose = () => {
@@ -50,6 +53,9 @@ const PromotionFormContainer = ({ products, promotions, error, onError, onReview
       type,
       value: parseFloat(value),
       code: voucher ? code.trim().toUpperCase() : "",
+      startDate,
+      endDate,
+      usageLimit: parseInt(usageLimit || "0", 10),
     };
     const err = validate(data, products, promotions, null);
     onError(err);
@@ -117,6 +123,16 @@ const PromotionFormContainer = ({ products, promotions, error, onError, onReview
             <small className="field-hint">4 to 14 letters or numbers</small>
           </label>
         )}
+
+        <div className="row">
+          <label>Start Date <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} /></label>
+          <label>Expiration Date <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} /></label>
+        </div>
+
+        <label>Usage Limit
+          <input type="number" min="0" step="1" value={usageLimit} onChange={(e) => setUsageLimit(e.target.value)} />
+          <small className="field-hint">0 = unlimited</small>
+        </label>
 
         <p className="error" role="alert">{error}</p>
         <div className="actions">

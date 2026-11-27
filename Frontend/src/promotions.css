@@ -98,6 +98,12 @@
 .promo-page #pickSearch {width: 100%; margin-bottom: 8px;}
 .promo-page .hint.pad {padding: 12px 14px;}
 .promo-page .prod.out .pname {color: #777;}
+.promo-page .review-sum {margin: 0 0 12px;}
+.promo-page .review-list {max-height: 220px; margin: 0 0 14px; padding: 0; overflow-y: auto; list-style: none; border: 1px solid var(--sand); border-radius: 14px; background: #fff;}
+.promo-page .review-list li {display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--soft);}
+.promo-page .review-list li:last-child {border-bottom: 0;}
+.promo-page .review-warn {margin: 0 0 14px; padding: 12px 14px; border: 1px solid #d8cd9a; border-radius: 14px; background: #efe9cf;}
+.promo-page .review-warn ul {margin: 6px 0 0; padding-left: 18px;}
 .promo-page .field-hint {display: block; margin: 4px 0 0; font-size: 13px; font-weight: 400; color: #5a5750;}
 .promo-page .picker legend {margin-bottom: 6px;}
 .promo-page .seg {display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; box-sizing: border-box; height: 42px; margin: 0; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: #fff;}
