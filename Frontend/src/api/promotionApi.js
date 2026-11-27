@@ -19,3 +19,7 @@ export const getPromotions = () => request("/");
 export const getProducts = () => request("/products");
 export const createPromotion = (promotion) =>
   request("/", { method: "POST", body: JSON.stringify(promotion) });
+export const updatePromotion = (id, promotion) =>
+  request("/" + id, { method: "PUT", body: JSON.stringify(promotion) });
+export const setDisabled = (id, disabled) =>
+  request("/" + id + "/status", { method: "PATCH", body: JSON.stringify({ disabled }) });

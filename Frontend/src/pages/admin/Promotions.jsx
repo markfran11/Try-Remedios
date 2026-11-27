@@ -24,6 +24,7 @@ const Promotions = () => {
 
   // popups
   const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState(null);   // null = creating a new promotion
   const [formError, setFormError] = useState("");
   const [review, setReview] = useState(null);     // the promotion waiting for "Confirm and save"
   const [toasts, setToasts] = useState([]);
@@ -55,20 +56,23 @@ const Promotions = () => {
   };
 
   /* ---------- Create / Edit ---------- */
-  const openForm = () => {
+  const openForm = (promotion) => {
+    setEditing(promotion);
     setFormError("");
     setFormOpen(true);
   };
 
   const closeForm = () => {
     setFormOpen(false);
+    setEditing(null);
     setFormError("");
     setReview(null);
   };
 
   const save = async (data) => {
     try {
-      await promotionApi.createPromotion(data);
+      if (editing) await promotionApi.updatePromotion(editing.id, data);
+      else await promotionApi.createPromotion(data);
     } catch (e) {
       setReview(null);          // back to the form, showing what the backend said
       setFormError(e.message);
@@ -79,13 +83,24 @@ const Promotions = () => {
     showToast(say("saved"));
   };
 
+  /* ---------- Disable / Enable ---------- */
+  const toggle = async (p) => {
+    try {
+      await promotionApi.setDisabled(p.id, !p.disabled);
+      await refresh();
+      showToast(say(p.disabled ? "enabled" : "disabled"));
+    } catch (e) {
+      showToast(e.message);
+    }
+  };
+
   const list = promotions;   // search and filters are added with 4.2.3
 
-  const listProps = { products };
+  const listProps = { products, onEdit: openForm, onToggle: toggle };
 
   return (
     <div className="promo-page">
-      <PromotionHeaderContainer onCreate={() => openForm()} />
+      <PromotionHeaderContainer onCreate={() => openForm(null)} />
       {loadError && <p className="error">{loadError}</p>}
 
       <div id="lists">
@@ -95,6 +110,7 @@ const Promotions = () => {
 
       {formOpen && (
         <PromotionFormContainer
+          editing={editing}
           products={products}
           promotions={promotions}
           error={formError}
@@ -108,7 +124,7 @@ const Promotions = () => {
           data={review}
           products={products}
           promotions={promotions}
-          editingId={null}
+          editingId={editing ? editing.id : null}
           onBack={() => setReview(null)}
           onConfirm={save}
         />

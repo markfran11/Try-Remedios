@@ -40,6 +40,41 @@ export const createPromotion = async (req, res) => {
   }
 };
 
+// Update
+export const editPromotion = async (req, res) => {
+  const { id } = req.params;
+  const promotion = { ...req.body, id: parseInt(id) };
+
+  try {
+    const updatedPromotion = await promotionService.updatePromotion(promotion);
+    res.status(200).json({
+      success: true,
+      message: updatedPromotion,
+    });
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
+// Enable / Disable
+export const changeStatus = async (req, res) => {
+  const { id } = req.params;
+  const { disabled } = req.body;
+
+  try {
+    const result = await promotionService.setPromotionDisabled(
+      parseInt(id),
+      disabled,
+    );
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
 // Price after promotion (for the Orders / Shop pages)
 export const getPromoPrice = async (req, res) => {
   const { productId, qty, code } = req.body;

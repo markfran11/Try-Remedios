@@ -2,7 +2,7 @@ import { say } from "../utils/promotionMessages";
 import PromotionCard from "./PromotionCard";
 
 // One list of cards (used twice: product discounts and voucher codes)
-const PromotionListContainer = ({ title, what, data, products }) => {
+const PromotionListContainer = ({ title, what, data, products, onEdit, onToggle }) => {
   return (
     <>
       <h2 className="sec">{title} <span className="count">{data.length}</span></h2>
@@ -13,7 +13,7 @@ const PromotionListContainer = ({ title, what, data, products }) => {
           </div>
         ) : (
           data.map((p) => (
-            <PromotionCard key={p.id} promo={p} products={products} />
+            <PromotionCard key={p.id} promo={p} products={products} onEdit={onEdit} onToggle={onToggle} />
           ))
         )}
       </div>
