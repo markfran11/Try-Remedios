@@ -8,6 +8,7 @@ export const peso = (n) =>
   "₱" + Number(n).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 export const fmt = (s) =>
   new Date(s + "T00:00:00").toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
+export const formatId = (id) => "PRM-" + String(id).padStart(3, "0");
 
 /* Does promotion p apply to this product? Vouchers (with a code) work on any item. */
 export const appliesTo = (p, product) =>
@@ -16,6 +17,18 @@ export const appliesTo = (p, product) =>
 /* ---------- Text pieces built from data ---------- */
 export const discountLabel = (p) =>
   p.type === "percent" ? say("pctOff", { value: p.value }) : say("fixedOff", { value: peso(p.value) });
+
+export const usedText = (p) =>
+  p.usageLimit ? say("usesLimit", { used: p.used, limit: p.usageLimit }) : say("usesFree", { used: p.used });
+
+export const productLabel = (p, products) => {
+  if (p.applyTo === "ALL") return say("allProducts");
+  if (p.productIds.length === 1) {
+    const found = products.find((x) => x.id === p.productIds[0]);
+    return found ? found.name : say("removedProduct");
+  }
+  return say("nProducts", { n: p.productIds.length });
+};
 
 export const afterPrice = (d, product) =>
   Math.max(0, d.type === "percent" ? product.price * (1 - d.value / 100) : product.price - d.value);
