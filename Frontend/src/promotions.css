@@ -1,0 +1,153 @@
+/* Promotions page styles. Everything is under .promo-page so it cannot change the other pages. */
+.promo-page {
+  /* Original green theme (matches the Inventory page) */
+  --forest:    #3f5a3f;  /* titles */
+  --forest-dk: #2f4a2f;  /* small dark text */
+  --btn:       #5e7d5c;  /* main buttons and selected toggles */
+  --btn-dk:    #4d6a4b;  /* main button hover */
+  --sidebar:   #3f5a3f;  /* sidebar background */
+  --sidebar-line: #759075;  /* line under the logo */
+  --moss:      #6b8467;  /* active menu item */
+  --sand:      #bcb696;  /* logo box */
+  --bark:      #4a2418;  /* secondary button text */
+  --mist:      #e4e4e6;  /* count chips, table header */
+  --soft:      #f4f5f2;  /* hover background */
+  --tint:      #e4ecdf;  /* selected row */
+  --line:      #b4b8b3;  /* soft border; change it here to change every border */
+  --shadow:    0 2px 10px rgba(30, 50, 30, .08);   /* soft shadow for cards */
+
+  color: #1d1d1d;
+}
+.promo-page :focus-visible {outline: 3px solid var(--forest-dk); outline-offset: 2px;}
+.promo-page .top {display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;}
+.promo-page h1 {margin: 0; font-family: Arial, Helvetica, sans-serif; font-weight: 400; color: var(--forest);
+     font-size: clamp(28px, 3.4vw, 42px);}
+.promo-page .btn {font: inherit; cursor: pointer; padding: 9px 18px; border-radius: 14px;
+       border: 1px solid var(--line); background: #fff; color: var(--bark);}
+.promo-page .btn:hover {background: var(--soft);}
+.promo-page .btn.primary {background: var(--forest); border-color: var(--forest); color: #fff;}
+.promo-page .btn.primary:hover {background: var(--btn-dk);}
+.promo-page .btn.sm {padding: 5px 12px; font-size: 14px; color: #1d1d1d;}
+.promo-page .btn.primary.sm {color: #fff;}
+.promo-page .btn.danger {color: #9b2c1b;}
+.promo-page input, .promo-page select {font: inherit; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; min-width: 0;}
+.promo-page .filters {display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px;}
+.promo-page .filters input {flex: 1 1 240px;}
+.promo-page .overlay {position: fixed; inset: 0; background: rgba(0, 0, 0, .4); display: flex; align-items: center; justify-content: center; padding: 16px;}
+.promo-page .modal {width: min(560px, 100%); max-height: 94vh; overflow-y: auto; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px;}
+.promo-page .modal-head {display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;}
+.promo-page h2 {margin: 0; font-family: Arial, Helvetica, sans-serif; font-weight: 400; color: var(--forest); font-size: 30px;}
+.promo-page .x {font-size: 22px; line-height: 1; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer;}
+.promo-page .modal label {display: block; margin-bottom: 14px; font-size: 15px;}
+.promo-page .modal label input, .promo-page .modal label select {display: block; width: 100%; margin-top: 6px;}
+.promo-page small {color: #777; margin-left: 4px;}
+.promo-page .row {display: grid; grid-template-columns: 1fr 1fr; gap: 14px;}
+.promo-page .inline {display: flex; gap: 8px;}
+.promo-page .inline input {margin-top: 6px;}
+.promo-page .inline .btn {margin-top: 6px;}
+.promo-page .error {color: #9b2c1b; min-height: 1.3em; margin: 0 0 8px;}
+.promo-page .actions {display: flex; justify-content: flex-end; gap: 10px;}
+@media (max-width: 860px) {
+.promo-page .row {grid-template-columns: 1fr;}
+}
+@media (max-width: 520px) {
+.promo-page .top .btn {width: 100%;}
+.promo-page .modal {padding: 18px;}
+.promo-page .actions .btn {flex: 1;}
+}
+.promo-page .toasts {position: fixed; right: 24px; bottom: 24px; z-index: 100; display: flex; flex-direction: column; gap: 10px; pointer-events: none;}
+.promo-page .toast {padding: 12px 20px; border-radius: 14px; background: var(--forest); color: #fff; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); animation: toast-in .25s ease;}
+.promo-page .toast.out {opacity: 0; transition: opacity .3s;}
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.promo-page .modal.sm {width: min(420px, 100%);}
+.promo-page .modal.sm h2 {font-size: 24px; margin-bottom: 8px;}
+.promo-page .confirm-text {margin: 0 0 20px; color: #444; line-height: 1.5;}
+.promo-page .btn.solid-danger {background: #9b2c1b; border-color: #9b2c1b; color: #fff;}
+.promo-page .btn.solid-danger:hover {background: #7f2315;}
+@media (max-width: 520px) {
+.promo-page .toasts {left: 16px; right: 16px; bottom: 16px;}
+}
+@media (prefers-reduced-motion: reduce) {
+.promo-page .toast {animation: none;}
+}
+.promo-page input:focus, .promo-page select:focus {border-color: var(--btn);}
+.promo-page .btn.primary {background: var(--btn); border-color: var(--btn);}
+.promo-page input:focus-visible, .promo-page select:focus-visible {outline: none; box-shadow: 0 0 0 3px rgba(94, 125, 92, .25);}
+.promo-page .sec {display: flex; align-items: center; gap: 10px; margin: 32px 0 14px; font-size: 22px; font-weight: 600; color: var(--forest);}
+.promo-page .count {padding: 2px 10px; border-radius: 999px; background: var(--mist); color: #555; font-size: 14px; font-weight: 400;}
+.promo-page .list-container {display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px;}
+.promo-page .list-item {display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow);}
+.promo-page .list-item.paused {opacity: .65;}
+.promo-page .item-top {display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;}
+.promo-page .item-info {flex: 1 1 120px;}
+.promo-page .item-info h3 {margin: 0 0 2px; font-size: 18px; overflow-wrap: anywhere;}
+.promo-page .muted {margin: 0; font-size: 14px; color: #6b6b6b; overflow-wrap: anywhere;}
+.promo-page .thumb {position: relative; flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 12px; background: var(--sand); color: var(--forest-dk); font-size: 26px; font-weight: 700;}
+.promo-page .cut {position: absolute; top: -8px; left: -8px; padding: 2px 7px; border-radius: 8px; background: #b3261e; color: #fff; font-size: 12px; font-weight: 600;}
+.promo-page .price {margin: 6px 0 0; font-size: 20px; font-weight: 700; color: var(--forest);}
+.promo-page .price s {margin-left: 8px; font-size: 14px; font-weight: 400; color: #888;}
+.promo-page .vcode {display: inline-block; padding: 2px 10px; border: 1px dashed var(--moss); border-radius: 8px; font-size: 17px; letter-spacing: .08em; color: var(--forest);}
+.promo-page .item-actions {display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto;}
+.promo-page .empty {grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 28px 12px; text-align: center; color: #5a5750; background: rgba(255, 255, 255, .5); border: 1px dashed var(--sand); border-radius: 16px;}
+.promo-page .badge {flex: none; padding: 4px 12px; border-radius: 999px; font-size: 13px;}
+.promo-page .badge.active {background: #dfe9d8; color: #2f4a2f;}
+.promo-page .badge.scheduled {background: #efe9cf; color: #6b5a1e;}
+.promo-page .badge.expired {background: #e4e4e4; color: #555;}
+.promo-page .badge.disabled {background: #efd9d3; color: #7a2e1d;}
+.promo-page .empty strong {font-size: 17px; font-weight: 600; color: var(--forest);}
+.promo-page .thumb img {width: 100%; height: 100%; object-fit: cover; border-radius: 12px;}
+.promo-page .pic {display: contents;}
+.promo-page .picker {min-width: 0; margin: 0 0 14px; padding: 0; border: 0;}
+.promo-page .picker legend {padding: 0; margin-bottom: 8px; font-size: 15px;}
+.promo-page .chips {display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;}
+.promo-page .modal .chip {position: relative; display: block; margin: 0;}
+.promo-page .modal .chip input {position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0;}
+.promo-page .chip span {display: block; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer;}
+.promo-page .chip input:checked + span {border-color: var(--btn); background: var(--btn); color: #fff;}
+.promo-page .chip input:focus-visible + span {outline: 3px solid var(--forest-dk); outline-offset: 2px;}
+.promo-page .hint {margin: 0; font-size: 14px; color: #5a5750;}
+.promo-page .picker-head {display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
+.promo-page .modal .check {display: inline-flex; align-items: center; gap: 8px; margin: 0;}
+.promo-page .modal .check input, .promo-page .modal .prod input {display: inline-block; width: auto; margin: 0; padding: 0; accent-color: var(--forest);}
+.promo-page .prod-list {max-height: 230px; overflow-y: auto; border: 1px solid var(--sand); border-radius: 14px; background: #fff;}
+.promo-page .modal .prod {display: grid; grid-template-columns: auto 40px 1fr auto; align-items: center; gap: 10px; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--soft); cursor: pointer;}
+.promo-page .prod:last-child {border-bottom: 0;}
+.promo-page .prod:hover {background: var(--soft);}
+.promo-page .prod:has(input:checked) {background: var(--tint);}
+.promo-page .pthumb {display: grid; place-items: center; width: 40px; height: 40px; overflow: hidden; border-radius: 10px; background: var(--sand); color: var(--forest-dk); font-weight: 700;}
+.promo-page .pthumb img {width: 100%; height: 100%; object-fit: cover;}
+.promo-page .pname {overflow-wrap: anywhere;}
+.promo-page .pprice {font-weight: 600; color: var(--forest-dk);}
+.promo-page #pickSearch {width: 100%; margin-bottom: 8px;}
+.promo-page .hint.pad {padding: 12px 14px;}
+.promo-page .prod.out .pname {color: #777;}
+.promo-page .review-sum {margin: 0 0 12px;}
+.promo-page .review-list {max-height: 220px; margin: 0 0 14px; padding: 0; overflow-y: auto; list-style: none; border: 1px solid var(--sand); border-radius: 14px; background: #fff;}
+.promo-page .review-list li {display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--soft);}
+.promo-page .review-list li:last-child {border-bottom: 0;}
+.promo-page .review-warn {margin: 0 0 14px; padding: 12px 14px; border: 1px solid #d8cd9a; border-radius: 14px; background: #efe9cf;}
+.promo-page .review-warn ul {margin: 6px 0 0; padding-left: 18px;}
+@media (width <= 320px) {
+.promo-page .list-container > .list-item {grid-column: span 12;
+    padding: 16px;}
+}
+@media (width > 1000px) {
+.promo-page .list-container > .list-item {grid-column: span 6;}
+}
+@media (width > 320px) and (width <= 1000px) {
+.promo-page .list-container > .list-item {grid-column: span 12;}
+}
+.promo-page .field-hint {display: block; margin: 4px 0 0; font-size: 13px; font-weight: 400; color: #5a5750;}
+.promo-page .picker legend {margin-bottom: 6px;}
+.promo-page .seg {display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; box-sizing: border-box; height: 42px; margin: 0; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: #fff;}
+.promo-page .seg .chip span {display: grid; place-items: center; height: 100%; padding: 0 10px; border: 0; border-radius: 9px; background: transparent; white-space: nowrap;}
+.promo-page .modal input:not([type="checkbox"]):not([type="radio"]), .promo-page .modal select {box-sizing: border-box; height: 42px;}
+.promo-page .modal h2 {font-size: 26px;}
+.promo-page .empty span:empty {display: none;}
+.promo-page .modal input:disabled, .promo-page .modal button:disabled {opacity: .55; cursor: not-allowed;}
+.promo-page .chip input:disabled + span {opacity: .55; cursor: not-allowed;}
+.promo-page .locked-note {margin: 0 0 14px; padding: 10px 14px; border: 1px solid #d8cd9a; border-radius: 14px; background: #fbf6e4; color: #5a4a14;}
+.promo-page .overlay { z-index: 60; }
+/* the leader global button style makes text white: keep the close button readable */
+.promo-page .x { color: #1d1d1d; }
+.promo-page .x:hover { background: #f3f3ee; color: #1d1d1d; }
