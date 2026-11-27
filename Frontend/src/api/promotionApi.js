@@ -15,7 +15,13 @@ const request = async (path, options = {}) => {
   return data;
 };
 
-export const getPromotions = () => request("/");
+// filters = { search, status, type } (empty ones are left out)
+export const getPromotions = (filters = {}) => {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => value && params.set(key, value));
+  const query = params.toString();
+  return request("/" + (query ? "?" + query : ""));
+};
 export const getProducts = () => request("/products");
 export const createPromotion = (promotion) =>
   request("/", { method: "POST", body: JSON.stringify(promotion) });
@@ -23,3 +29,4 @@ export const updatePromotion = (id, promotion) =>
   request("/" + id, { method: "PUT", body: JSON.stringify(promotion) });
 export const setDisabled = (id, disabled) =>
   request("/" + id + "/status", { method: "PATCH", body: JSON.stringify({ disabled }) });
+export const deletePromotion = (id) => request("/" + id, { method: "DELETE" });

@@ -2,7 +2,7 @@ import { say } from "../utils/promotionMessages";
 import { appliesTo, afterPrice, day, discountLabel, fmt, formatId, peso, productLabel, usedText } from "../utils/promotionRules";
 import PromotionThumb from "./PromotionThumb";
 
-const PromotionCard = ({ promo: p, products, onEdit, onToggle }) => {
+const PromotionCard = ({ promo: p, products, onEdit, onToggle, onDelete }) => {
   const status = p.status;
   const hits = products.filter((x) => appliesTo(p, x));
   const prod = !p.code && hits.length === 1 ? hits[0] : null;   // shows the new price when it targets one product
@@ -44,6 +44,7 @@ const PromotionCard = ({ promo: p, products, onEdit, onToggle }) => {
       <div className="item-actions">
         <button className="btn sm" onClick={() => onEdit(p)}>Edit</button>
         <button className="btn sm" onClick={() => onToggle(p)}>{say(p.disabled ? "enable" : "disable")}</button>
+        <button className="btn sm danger" onClick={() => onDelete(p)}>Delete</button>
       </div>
     </article>
   );

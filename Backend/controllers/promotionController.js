@@ -10,7 +10,7 @@ const sendError = (res, e) => {
 
 export const fetchAllPromotions = async (req, res) => {
   try {
-    const promotions = await promotionService.fetchAllPromotions();
+    const promotions = await promotionService.fetchAllPromotions(req.query);
     res.status(200).json(promotions);
   } catch (e) {
     sendError(res, e);
@@ -69,6 +69,23 @@ export const changeStatus = async (req, res) => {
     res.status(200).json({
       success: true,
       message: result,
+    });
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
+// Delete
+export const deletePromotion = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedPromotion = await promotionService.deletePromotion(
+      parseInt(id),
+    );
+    res.status(200).json({
+      success: true,
+      message: deletedPromotion,
     });
   } catch (e) {
     sendError(res, e);
