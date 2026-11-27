@@ -15,5 +15,6 @@ const request = async (path, options = {}) => {
   return data;
 };
 
+export const getProducts = () => request("/products");
 export const createPromotion = (promotion) =>
   request("/", { method: "POST", body: JSON.stringify(promotion) });

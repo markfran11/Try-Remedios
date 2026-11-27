@@ -73,6 +73,7 @@
 .promo-page input:focus, .promo-page select:focus {border-color: var(--btn);}
 .promo-page .btn.primary {background: var(--btn); border-color: var(--btn);}
 .promo-page input:focus-visible, .promo-page select:focus-visible {outline: none; box-shadow: 0 0 0 3px rgba(94, 125, 92, .25);}
+.promo-page .muted {margin: 0; font-size: 14px; color: #6b6b6b; overflow-wrap: anywhere;}
 .promo-page .picker {min-width: 0; margin: 0 0 14px; padding: 0; border: 0;}
 .promo-page .picker legend {padding: 0; margin-bottom: 8px; font-size: 15px;}
 .promo-page .chips {display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;}
@@ -81,6 +82,23 @@
 .promo-page .chip span {display: block; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer;}
 .promo-page .chip input:checked + span {border-color: var(--btn); background: var(--btn); color: #fff;}
 .promo-page .chip input:focus-visible + span {outline: 3px solid var(--forest-dk); outline-offset: 2px;}
+.promo-page .hint {margin: 0; font-size: 14px; color: #5a5750;}
+.promo-page .picker-head {display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
+.promo-page .modal .check {display: inline-flex; align-items: center; gap: 8px; margin: 0;}
+.promo-page .modal .check input, .promo-page .modal .prod input {display: inline-block; width: auto; margin: 0; padding: 0; accent-color: var(--forest);}
+.promo-page .prod-list {max-height: 230px; overflow-y: auto; border: 1px solid var(--sand); border-radius: 14px; background: #fff;}
+.promo-page .modal .prod {display: grid; grid-template-columns: auto 40px 1fr auto; align-items: center; gap: 10px; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--soft); cursor: pointer;}
+.promo-page .prod:last-child {border-bottom: 0;}
+.promo-page .prod:hover {background: var(--soft);}
+.promo-page .prod:has(input:checked) {background: var(--tint);}
+.promo-page .pthumb {display: grid; place-items: center; width: 40px; height: 40px; overflow: hidden; border-radius: 10px; background: var(--sand); color: var(--forest-dk); font-weight: 700;}
+.promo-page .pthumb img {width: 100%; height: 100%; object-fit: cover;}
+.promo-page .pname {overflow-wrap: anywhere;}
+.promo-page .pprice {font-weight: 600; color: var(--forest-dk);}
+.promo-page #pickSearch {width: 100%; margin-bottom: 8px;}
+.promo-page .hint.pad {padding: 12px 14px;}
+.promo-page .prod.out .pname {color: #777;}
+.promo-page .field-hint {display: block; margin: 4px 0 0; font-size: 13px; font-weight: 400; color: #5a5750;}
 .promo-page .picker legend {margin-bottom: 6px;}
 .promo-page .seg {display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; box-sizing: border-box; height: 42px; margin: 0; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: #fff;}
 .promo-page .seg .chip span {display: grid; place-items: center; height: 100%; padding: 0 10px; border: 0; border-radius: 9px; background: transparent; white-space: nowrap;}
