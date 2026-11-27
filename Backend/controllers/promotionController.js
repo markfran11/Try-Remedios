@@ -8,6 +8,15 @@ const sendError = (res, e) => {
   });
 };
 
+export const fetchAllPromotions = async (req, res) => {
+  try {
+    const promotions = await promotionService.fetchAllPromotions();
+    res.status(200).json(promotions);
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
 // products for the "Apply To" picker
 export const fetchAllProducts = async (req, res) => {
   try {
@@ -26,6 +35,57 @@ export const createPromotion = async (req, res) => {
       success: true,
       message: promotionId,
     });
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
+// Price after promotion (for the Orders / Shop pages)
+export const getPromoPrice = async (req, res) => {
+  const { productId, qty, code } = req.body;
+
+  try {
+    const result = await promotionService.getPromoPrice(productId, qty, code);
+    res.status(200).json(result);
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
+// Price of a whole cart: product discounts first, then the voucher code is taken off the whole total once
+export const getCartPrice = async (req, res) => {
+  const { items, code } = req.body;
+
+  try {
+    const result = await promotionService.getCartPrice(items, code);
+    res.status(200).json(result);
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
+// Count one use of a promotion (when an order is confirmed)
+export const usePromotion = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await promotionService.usePromotion(parseInt(id));
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
+// Check a typed voucher code
+export const checkVoucher = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    const result = await promotionService.checkVoucher(code);
+    res.status(200).json(result);
   } catch (e) {
     sendError(res, e);
   }

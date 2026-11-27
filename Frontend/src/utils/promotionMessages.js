@@ -2,6 +2,7 @@
 const messages = {
   // Small messages
   saved: "Promotion saved",
+  loadFailed: "Unable to load promotions. Is the backend running?",
   // Popups
   titleCreate: "Create Promotion",
   discardTitle: "Discard changes?",
@@ -9,12 +10,29 @@ const messages = {
   discardOk: "Discard",
   discardKeep: "Keep editing",
   // Cards
+  statusActive: "Active",
+  statusScheduled: "Scheduled",
+  statusExpired: "Expired",
+  statusDisabled: "Disabled",
+  starts: "Starts {date}",
+  until: "Until {date}",
+  usesLimit: "{used} of {limit} uses",
+  usesFree: "{used} uses, no limit",
   pctOff: "{value}% off",
   fixedOff: "{value} off",
+  anyItem: "on the whole order",
+  thumbAll: "★",
+  thumbPct: "%",
+  thumbPeso: "₱",
   // Apply To list
   allProducts: "All products",
+  removedProduct: "(removed product)",
+  nProducts: "{n} products",
   nSelected: "{n} selected",
   // Empty lists
+  whatDiscounts: "product discounts",
+  whatVouchers: "voucher codes",
+  noneTitle: "No {what} yet",
   // Product picker
   outOfStock: "Out of stock",
   noProducts: "No products match your search.",

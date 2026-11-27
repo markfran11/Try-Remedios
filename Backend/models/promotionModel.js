@@ -6,12 +6,13 @@ const PROMOTION_COLUMNS = `
   id, name, apply_to AS applyTo, type, value, code,
   DATE_FORMAT(start_date, '%Y-%m-%d') AS startDate,
   DATE_FORMAT(end_date, '%Y-%m-%d') AS endDate,
-  usage_limit AS usageLimit`;
+  usage_limit AS usageLimit, used, disabled`;
 
 // MySQL gives DECIMAL as text and TINYINT as 0/1, so clean them up here
 const toPromotion = (row, productIds) => ({
   ...row,
   value: Number(row.value),
+  disabled: Boolean(row.disabled),
   productIds: productIds || [],
 });
 
@@ -20,6 +21,23 @@ const insertProducts = async (conn, promotionId, productIds) => {
   await conn.query(
     "INSERT INTO promotion_product(promotion_id, product_id) VALUES ?",
     [productIds.map((productId) => [promotionId, productId])],
+  );
+};
+
+// Retrieve
+export const fetch = async () => {
+  const [rows] = await pool.query(
+    `SELECT ${PROMOTION_COLUMNS} FROM promotion ORDER BY id`,
+  );
+  const [links] = await pool.query(
+    "SELECT promotion_id, product_id FROM promotion_product",
+  );
+
+  return rows.map((row) =>
+    toPromotion(
+      row,
+      links.filter((l) => l.promotion_id === row.id).map((l) => l.product_id),
+    ),
   );
 };
 
@@ -66,4 +84,16 @@ export const insert = async (promotion) => {
   } finally {
     conn.release();
   }
+};
+
+// Count one use. The checks and the +1 happen in ONE statement, so two orders at the
+// same time can never go past the usage limit. Returns 1 if counted, 0 if it can't be used.
+export const incrementUsed = async (id, today) => {
+  const [result] = await pool.query(
+    `UPDATE promotion SET used = used + 1
+     WHERE id = ? AND disabled = 0 AND start_date <= ? AND end_date >= ?
+       AND (usage_limit = 0 OR used < usage_limit)`,
+    [id, today, today],
+  );
+  return result.affectedRows;
 };

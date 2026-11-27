@@ -2,12 +2,31 @@ import * as promotionModel from "../models/promotionModel.js";
 import ValidationError from "../utils/promotionValidationError.js";
 
 /* ---------- Small helpers ---------- */
+const pad = (n) => String(n).padStart(2, "0");
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
 const peso = (n) =>
   "₱" +
   Number(n).toLocaleString("en-PH", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+const round2 = (n) => Math.round(n * 100) / 100;
+
+// Does promotion p apply to this product? Vouchers (with a code) work on any item.
+export const appliesTo = (p, product) =>
+  Boolean(p.code) || p.applyTo === "ALL" || p.productIds.includes(product.id);
+
+// Status is worked out from the dates, usage and the Disable switch
+export const statusOf = (p) => {
+  if (p.disabled) return "Disabled";
+  if (today() > p.endDate || (p.usageLimit > 0 && p.used >= p.usageLimit))
+    return "Expired";
+  if (today() < p.startDate) return "Scheduled";
+  return "Active";
+};
 
 /* ---------- Validation (throws ValidationError, like userService) ---------- */
 export const validatePromotion = (d, products) => {
@@ -89,6 +108,13 @@ const checkProductsExist = (d, products) => {
   if (d.productIds.some((id) => !known.has(id)))
     throw new ValidationError("One of the chosen products no longer exists.");
 };
+
+/* ---------- Retrieve ---------- */
+export const fetchAllPromotions = async () => {
+  const promotions = await promotionModel.fetch();
+  return promotions.map((p) => ({ ...p, status: statusOf(p) }));
+};
+
 export const fetchAllProducts = async () => {
   const products = await promotionModel.fetchProducts();
   return products;
@@ -113,4 +139,150 @@ export const createPromotion = async (body) => {
       );
     throw e;
   }
+};
+
+/* ---------- Pricing (BRD ReqID 21 and 22) ----------
+   Used by the Orders / Shop part of the system.
+   Applies the single best active discount (no stacking). A voucher needs the
+   matching code. A percentage voucher takes % off the item total; a fixed
+   voucher comes off once. */
+export const computePromoPrice = (product, promotions, qty, code) => {
+  const full = product.price * qty;
+  const typed = String(code ?? "").toUpperCase();
+  let best = 0;
+  let applied = null;
+
+  promotions.forEach((p) => {
+    if (statusOf(p) !== "Active" || !appliesTo(p, product)) return;
+    if (p.code && p.code !== typed) return; // vouchers need the matching code
+    const off = Math.min(
+      full,
+      p.type === "percent"
+        ? (full * p.value) / 100
+        : p.value * (p.code ? 1 : qty),
+    );
+    if (off > best) {
+      best = off;
+      applied = p;
+    }
+  });
+
+  const total = round2(full - best);
+  return {
+    unitPrice: qty > 0 ? round2(total / qty) : product.price,
+    total,
+    discount: round2(best),
+    promo: applied,
+  };
+};
+
+export const getPromoPrice = async (productId, qty, code) => {
+  const quantity = Number(qty);
+  if (!Number.isInteger(quantity) || quantity <= 0)
+    throw new ValidationError("Quantity must be a whole number above 0.");
+
+  const products = await promotionModel.fetchProducts();
+  const product = products.find((p) => p.id === Number(productId));
+  if (!product) throw new ValidationError("Product does not exist!", 404);
+
+  const promotions = await promotionModel.fetch();
+  return computePromoPrice(product, promotions, quantity, code);
+};
+
+/* Price of a whole cart (1 or more products).
+   Step 1: every product gets its own automatic discount, if it has one.
+   Step 2: a voucher code is taken off the WHOLE total, once, after the product
+   discounts (both can be used together). A fixed voucher of 50 pesos takes 50 off
+   the total, however many products are in the cart. A percentage voucher takes
+   that % off the total. The code never makes the total go below 0. */
+export const computeCartPrice = (products, promotions, items, code) => {
+  const typed = String(code ?? "").trim().toUpperCase();
+
+  // same product listed twice -> one line
+  const qtyById = new Map();
+  items.forEach((i) => qtyById.set(Number(i.productId), (qtyById.get(Number(i.productId)) || 0) + Number(i.qty)));
+
+  const lines = [...qtyById].map(([productId, qty]) => {
+    const product = products.find((p) => p.id === productId);
+    if (!product) throw new ValidationError("Product does not exist!", 404);
+    if (!Number.isInteger(qty) || qty <= 0)
+      throw new ValidationError("Quantity must be a whole number above 0.");
+    const price = computePromoPrice(product, promotions, qty, ""); // product discounts only
+    return {
+      productId: product.id,
+      name: product.name,
+      qty,
+      unitPrice: price.unitPrice,
+      total: price.total,
+      discount: price.discount,
+      promo: price.promo,
+    };
+  });
+
+  const sum = (key) => round2(lines.reduce((s, l) => s + l[key], 0));
+  const subtotal = sum("total");
+  const productDiscount = sum("discount");
+
+  let voucher = null;
+  let voucherDiscount = 0;
+  if (typed) {
+    const promo = promotions.find((p) => p.code === typed);
+    if (!promo) throw new ValidationError("Voucher code not found.", 404);
+    if (statusOf(promo) !== "Active")
+      throw new ValidationError(`This voucher can't be used (${statusOf(promo).toLowerCase()}).`, 409);
+
+    const off = promo.type === "percent" ? (subtotal * promo.value) / 100 : promo.value;
+    voucherDiscount = round2(Math.min(subtotal, off));
+    voucher = { id: promo.id, code: promo.code, discount: voucherDiscount };
+  }
+
+  return {
+    lines,
+    subtotal,                                            // after the product discounts, before the voucher
+    productDiscount,
+    voucher,                                             // null when no code was used
+    discount: round2(productDiscount + voucherDiscount), // all discounts together
+    total: round2(subtotal - voucherDiscount),
+  };
+};
+
+export const getCartPrice = async (items, code) => {
+  if (!Array.isArray(items) || items.length === 0)
+    throw new ValidationError("The cart is empty.");
+
+  const products = await promotionModel.fetchProducts();
+  const promotions = await promotionModel.fetch();
+  return computeCartPrice(products, promotions, items, code);
+};
+
+// Called by the Orders part when an order is confirmed: counts one use of the promotion.
+// It only works while the promotion is Active and the usage limit is not reached yet.
+export const usePromotion = async (id) => {
+  const existing = await promotionModel.findPromotionById(id);
+  if (existing.length === 0)
+    throw new ValidationError("Promotion does not exist!", 404);
+
+  const counted = await promotionModel.incrementUsed(id, today());
+  const [latest] = await promotionModel.findPromotionById(id);
+  if (counted === 0)
+    throw new ValidationError(
+      `This promotion can't be used (${statusOf(latest).toLowerCase()}).`,
+      409,
+    );
+
+  return { used: latest.used };
+};
+
+// Checks a typed voucher code. reason: "empty", "notfound", "disabled", "scheduled" or "expired"
+export const checkVoucher = async (code) => {
+  const typed = String(code ?? "").trim().toUpperCase();
+  if (!typed) return { ok: false, promo: null, reason: "empty" };
+
+  const found = await promotionModel.findPromotionByCode(typed);
+  if (found.length === 0) return { ok: false, promo: null, reason: "notfound" };
+
+  const status = statusOf(found[0]);
+  return status === "Active"
+    ? { ok: true, promo: found[0], reason: "" }
+    : { ok: false, promo: found[0], reason: status.toLowerCase() };
 };

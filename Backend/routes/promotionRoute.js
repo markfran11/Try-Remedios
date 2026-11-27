@@ -3,7 +3,12 @@ import express from "express";
 
 const promotionRoute = express.Router();
 
+promotionRoute.get('/', promotionController.fetchAllPromotions);
 promotionRoute.get('/products', promotionController.fetchAllProducts);
+promotionRoute.get('/voucher/:code', promotionController.checkVoucher);
 promotionRoute.post('/', promotionController.createPromotion);
+promotionRoute.post('/price', promotionController.getPromoPrice);
+promotionRoute.post('/cart-price', promotionController.getCartPrice);
+promotionRoute.post('/:id/use', promotionController.usePromotion);
 
 export default promotionRoute;
