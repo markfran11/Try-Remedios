@@ -3,7 +3,10 @@ import pool from "../config/db.js";
 // Columns are renamed (AS) so the JSON uses the same names as the React page.
 // DATE_FORMAT keeps the dates as plain "YYYY-MM-DD" text (no timezone shifting).
 const PROMOTION_COLUMNS = `
-  id, name, apply_to AS applyTo, type, value, code`;
+  id, name, apply_to AS applyTo, type, value, code,
+  DATE_FORMAT(start_date, '%Y-%m-%d') AS startDate,
+  DATE_FORMAT(end_date, '%Y-%m-%d') AS endDate,
+  usage_limit AS usageLimit`;
 
 // MySQL gives DECIMAL as text and TINYINT as 0/1, so clean them up here
 const toPromotion = (row, productIds) => ({
@@ -42,13 +45,16 @@ export const insert = async (promotion) => {
   try {
     await conn.beginTransaction();
     const [result] = await conn.query(
-      "INSERT INTO promotion(name, apply_to, type, value, code) VALUES (?,?,?,?,?)",
+      "INSERT INTO promotion(name, apply_to, type, value, code, start_date, end_date, usage_limit) VALUES (?,?,?,?,?,?,?,?)",
       [
         promotion.name,
         promotion.applyTo,
         promotion.type,
         promotion.value,
         promotion.code,
+        promotion.startDate,
+        promotion.endDate,
+        promotion.usageLimit,
       ],
     );
     await insertProducts(conn, result.insertId, promotion.productIds);

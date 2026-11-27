@@ -37,6 +37,16 @@ export const validatePromotion = (d, products) => {
       );
   }
 
+  const isDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
+  if (!isDate(d.startDate) || !isDate(d.endDate))
+    throw new ValidationError("Choose a start date and an expiration date.");
+  if (d.endDate < d.startDate)
+    throw new ValidationError(
+      "The expiration date cannot be before the start date.",
+    );
+  if (!Number.isInteger(d.usageLimit) || d.usageLimit < 0)
+    throw new ValidationError("Usage limit must be 0 or more.");
+
   if (voucher && !d.code)
     throw new ValidationError("Enter a voucher code, or press Generate.");
   if (voucher && !/^[A-Z0-9]{4,14}$/.test(d.code))
@@ -58,6 +68,9 @@ const normalize = (body) => {
     type: body.type,
     value: Number(body.value),
     code: voucher ? String(body.code ?? "").trim().toUpperCase() : null,
+    startDate: body.startDate,
+    endDate: body.endDate,
+    usageLimit: body.usageLimit === "" || body.usageLimit == null ? 0 : Number(body.usageLimit),
   };
 };
 

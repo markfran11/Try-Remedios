@@ -4,6 +4,7 @@ import { say } from "../../utils/promotionMessages";
 import * as promotionApi from "../../api/promotionApi";
 import PromotionHeaderContainer from "../../components/PromotionHeaderContainer";
 import PromotionFormContainer from "../../components/PromotionFormContainer";
+import PromotionReviewModal from "../../components/PromotionReviewModal";
 import PromotionToasts from "../../components/PromotionToasts";
 
 const Promotions = () => {
@@ -13,6 +14,7 @@ const Promotions = () => {
   // popups
   const [formOpen, setFormOpen] = useState(false);
   const [formError, setFormError] = useState("");
+  const [review, setReview] = useState(null);     // the promotion waiting for "Confirm and save"
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
@@ -39,12 +41,14 @@ const Promotions = () => {
   const closeForm = () => {
     setFormOpen(false);
     setFormError("");
+    setReview(null);
   };
 
   const save = async (data) => {
     try {
       await promotionApi.createPromotion(data);
     } catch (e) {
+      setReview(null);          // back to the form, showing what the backend said
       setFormError(e.message);
       return;
     }
@@ -62,8 +66,18 @@ const Promotions = () => {
           promotions={promotions}
           error={formError}
           onError={setFormError}
-          onReview={save}
+          onReview={setReview}
           onClose={closeForm}
+        />
+      )}
+      {review && (
+        <PromotionReviewModal
+          data={review}
+          products={products}
+          promotions={promotions}
+          editingId={null}
+          onBack={() => setReview(null)}
+          onConfirm={save}
         />
       )}
 
