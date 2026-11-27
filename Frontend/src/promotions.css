@@ -73,30 +73,6 @@
 .promo-page input:focus, .promo-page select:focus {border-color: var(--btn);}
 .promo-page .btn.primary {background: var(--btn); border-color: var(--btn);}
 .promo-page input:focus-visible, .promo-page select:focus-visible {outline: none; box-shadow: 0 0 0 3px rgba(94, 125, 92, .25);}
-.promo-page .sec {display: flex; align-items: center; gap: 10px; margin: 32px 0 14px; font-size: 22px; font-weight: 600; color: var(--forest);}
-.promo-page .count {padding: 2px 10px; border-radius: 999px; background: var(--mist); color: #555; font-size: 14px; font-weight: 400;}
-.promo-page .list-container {display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px;}
-.promo-page .list-item {display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow);}
-.promo-page .list-item.paused {opacity: .65;}
-.promo-page .item-top {display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px;}
-.promo-page .item-info {flex: 1 1 120px;}
-.promo-page .item-info h3 {margin: 0 0 2px; font-size: 18px; overflow-wrap: anywhere;}
-.promo-page .muted {margin: 0; font-size: 14px; color: #6b6b6b; overflow-wrap: anywhere;}
-.promo-page .thumb {position: relative; flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 12px; background: var(--sand); color: var(--forest-dk); font-size: 26px; font-weight: 700;}
-.promo-page .cut {position: absolute; top: -8px; left: -8px; padding: 2px 7px; border-radius: 8px; background: #b3261e; color: #fff; font-size: 12px; font-weight: 600;}
-.promo-page .price {margin: 6px 0 0; font-size: 20px; font-weight: 700; color: var(--forest);}
-.promo-page .price s {margin-left: 8px; font-size: 14px; font-weight: 400; color: #888;}
-.promo-page .vcode {display: inline-block; padding: 2px 10px; border: 1px dashed var(--moss); border-radius: 8px; font-size: 17px; letter-spacing: .08em; color: var(--forest);}
-.promo-page .item-actions {display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto;}
-.promo-page .empty {grid-column: 1 / -1; display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 28px 12px; text-align: center; color: #5a5750; background: rgba(255, 255, 255, .5); border: 1px dashed var(--sand); border-radius: 16px;}
-.promo-page .badge {flex: none; padding: 4px 12px; border-radius: 999px; font-size: 13px;}
-.promo-page .badge.active {background: #dfe9d8; color: #2f4a2f;}
-.promo-page .badge.scheduled {background: #efe9cf; color: #6b5a1e;}
-.promo-page .badge.expired {background: #e4e4e4; color: #555;}
-.promo-page .badge.disabled {background: #efd9d3; color: #7a2e1d;}
-.promo-page .empty strong {font-size: 17px; font-weight: 600; color: var(--forest);}
-.promo-page .thumb img {width: 100%; height: 100%; object-fit: cover; border-radius: 12px;}
-.promo-page .pic {display: contents;}
 .promo-page .picker {min-width: 0; margin: 0 0 14px; padding: 0; border: 0;}
 .promo-page .picker legend {padding: 0; margin-bottom: 8px; font-size: 15px;}
 .promo-page .chips {display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;}
@@ -105,49 +81,9 @@
 .promo-page .chip span {display: block; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer;}
 .promo-page .chip input:checked + span {border-color: var(--btn); background: var(--btn); color: #fff;}
 .promo-page .chip input:focus-visible + span {outline: 3px solid var(--forest-dk); outline-offset: 2px;}
-.promo-page .hint {margin: 0; font-size: 14px; color: #5a5750;}
-.promo-page .picker-head {display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
-.promo-page .modal .check {display: inline-flex; align-items: center; gap: 8px; margin: 0;}
-.promo-page .modal .check input, .promo-page .modal .prod input {display: inline-block; width: auto; margin: 0; padding: 0; accent-color: var(--forest);}
-.promo-page .prod-list {max-height: 230px; overflow-y: auto; border: 1px solid var(--sand); border-radius: 14px; background: #fff;}
-.promo-page .modal .prod {display: grid; grid-template-columns: auto 40px 1fr auto; align-items: center; gap: 10px; margin: 0; padding: 8px 12px; border-bottom: 1px solid var(--soft); cursor: pointer;}
-.promo-page .prod:last-child {border-bottom: 0;}
-.promo-page .prod:hover {background: var(--soft);}
-.promo-page .prod:has(input:checked) {background: var(--tint);}
-.promo-page .pthumb {display: grid; place-items: center; width: 40px; height: 40px; overflow: hidden; border-radius: 10px; background: var(--sand); color: var(--forest-dk); font-weight: 700;}
-.promo-page .pthumb img {width: 100%; height: 100%; object-fit: cover;}
-.promo-page .pname {overflow-wrap: anywhere;}
-.promo-page .pprice {font-weight: 600; color: var(--forest-dk);}
-.promo-page #pickSearch {width: 100%; margin-bottom: 8px;}
-.promo-page .hint.pad {padding: 12px 14px;}
-.promo-page .prod.out .pname {color: #777;}
-.promo-page .review-sum {margin: 0 0 12px;}
-.promo-page .review-list {max-height: 220px; margin: 0 0 14px; padding: 0; overflow-y: auto; list-style: none; border: 1px solid var(--sand); border-radius: 14px; background: #fff;}
-.promo-page .review-list li {display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--soft);}
-.promo-page .review-list li:last-child {border-bottom: 0;}
-.promo-page .review-warn {margin: 0 0 14px; padding: 12px 14px; border: 1px solid #d8cd9a; border-radius: 14px; background: #efe9cf;}
-.promo-page .review-warn ul {margin: 6px 0 0; padding-left: 18px;}
-@media (width <= 320px) {
-.promo-page .list-container > .list-item {grid-column: span 12;
-    padding: 16px;}
-}
-@media (width > 1000px) {
-.promo-page .list-container > .list-item {grid-column: span 6;}
-}
-@media (width > 320px) and (width <= 1000px) {
-.promo-page .list-container > .list-item {grid-column: span 12;}
-}
-.promo-page .field-hint {display: block; margin: 4px 0 0; font-size: 13px; font-weight: 400; color: #5a5750;}
 .promo-page .picker legend {margin-bottom: 6px;}
 .promo-page .seg {display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; box-sizing: border-box; height: 42px; margin: 0; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: #fff;}
 .promo-page .seg .chip span {display: grid; place-items: center; height: 100%; padding: 0 10px; border: 0; border-radius: 9px; background: transparent; white-space: nowrap;}
 .promo-page .modal input:not([type="checkbox"]):not([type="radio"]), .promo-page .modal select {box-sizing: border-box; height: 42px;}
 .promo-page .modal h2 {font-size: 26px;}
-.promo-page .empty span:empty {display: none;}
-.promo-page .modal input:disabled, .promo-page .modal button:disabled {opacity: .55; cursor: not-allowed;}
-.promo-page .chip input:disabled + span {opacity: .55; cursor: not-allowed;}
-.promo-page .locked-note {margin: 0 0 14px; padding: 10px 14px; border: 1px solid #d8cd9a; border-radius: 14px; background: #fbf6e4; color: #5a4a14;}
 .promo-page .overlay { z-index: 60; }
-/* the leader global button style makes text white: keep the close button readable */
-.promo-page .x { color: #1d1d1d; }
-.promo-page .x:hover { background: #f3f3ee; color: #1d1d1d; }
