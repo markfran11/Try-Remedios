@@ -4,7 +4,7 @@ import { peso } from "../utils/promotionRules";
 import PromotionThumb from "./PromotionThumb";
 
 // Tick the products of the chosen category. The ticked ids are kept by the form (ids / onChange).
-const PromotionProductPicker = ({ products, cat, ids, onChange }) => {
+const PromotionProductPicker = ({ products, cat, ids, onChange, disabled = false }) => {
   const [query, setQuery] = useState("");
 
   const items = products.filter(
@@ -28,6 +28,7 @@ const PromotionProductPicker = ({ products, cat, ids, onChange }) => {
         placeholder="Search products in this category..."
         aria-label="Search products"
         id="pickSearch"
+        disabled={disabled}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -36,6 +37,7 @@ const PromotionProductPicker = ({ products, cat, ids, onChange }) => {
           <input
             type="checkbox"
             checked={items.length > 0 && ticked === items.length}
+            disabled={disabled}
             ref={(el) => { if (el) el.indeterminate = ticked > 0 && ticked < items.length; }}
             onChange={(e) => toggleAll(e.target.checked)}
           /> Select all
@@ -50,7 +52,7 @@ const PromotionProductPicker = ({ products, cat, ids, onChange }) => {
             const out = typeof p.stock === "number" && p.stock <= 0;   // out of stock: still selectable, just marked
             return (
               <label key={p.id} className={out ? "prod out" : "prod"}>
-                <input type="checkbox" checked={ids.includes(p.id)} onChange={(e) => toggleOne(p.id, e.target.checked)} />
+                <input type="checkbox" disabled={disabled} checked={ids.includes(p.id)} onChange={(e) => toggleOne(p.id, e.target.checked)} />
                 <span className="pthumb"><PromotionThumb product={p} /></span>
                 <span className="pname">{p.name} {out && <small>{say("outOfStock")}</small>}</span>
                 <span className="pprice">{peso(p.price)}</span>

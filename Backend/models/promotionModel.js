@@ -41,6 +41,18 @@ export const fetch = async () => {
   );
 };
 
+export const findPromotionById = async (id) => {
+  const [rows] = await pool.query(
+    `SELECT ${PROMOTION_COLUMNS} FROM promotion WHERE id = ?`,
+    [id],
+  );
+  const [links] = await pool.query(
+    "SELECT product_id FROM promotion_product WHERE promotion_id = ?",
+    [id],
+  );
+  return rows.map((row) => toPromotion(row, links.map((l) => l.product_id)));
+};
+
 export const findPromotionByCode = async (code) => {
   const [rows] = await pool.query(
     `SELECT ${PROMOTION_COLUMNS} FROM promotion WHERE code = ?`,
@@ -86,6 +98,39 @@ export const insert = async (promotion) => {
   }
 };
 
+// update
+export const update = async (promotion) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    const [result] = await conn.query(
+      "UPDATE promotion SET name= ?, apply_to= ?, type= ?, value= ?, code= ?, start_date= ?, end_date= ?, usage_limit= ? WHERE id= ? ",
+      [
+        promotion.name,
+        promotion.applyTo,
+        promotion.type,
+        promotion.value,
+        promotion.code,
+        promotion.startDate,
+        promotion.endDate,
+        promotion.usageLimit,
+        promotion.id,
+      ],
+    );
+    await conn.query("DELETE FROM promotion_product WHERE promotion_id= ?", [
+      promotion.id,
+    ]);
+    await insertProducts(conn, promotion.id, promotion.productIds);
+    await conn.commit();
+    return result.affectedRows;
+  } catch (e) {
+    await conn.rollback();
+    throw e;
+  } finally {
+    conn.release();
+  }
+};
+
 // Count one use. The checks and the +1 happen in ONE statement, so two orders at the
 // same time can never go past the usage limit. Returns 1 if counted, 0 if it can't be used.
 export const incrementUsed = async (id, today) => {
@@ -94,6 +139,15 @@ export const incrementUsed = async (id, today) => {
      WHERE id = ? AND disabled = 0 AND start_date <= ? AND end_date >= ?
        AND (usage_limit = 0 OR used < usage_limit)`,
     [id, today, today],
+  );
+  return result.affectedRows;
+};
+
+// enable / disable
+export const updateDisabled = async (id, disabled) => {
+  const [result] = await pool.query(
+    "UPDATE promotion SET disabled= ? WHERE id= ? ",
+    [disabled ? 1 : 0, id],
   );
   return result.affectedRows;
 };

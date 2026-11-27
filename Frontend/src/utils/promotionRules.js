@@ -49,6 +49,8 @@ export const validate = (d, products, promotions, editingId) => {
   if (!d.startDate || !d.endDate) return say("errDates");
   if (d.endDate < d.startDate) return say("errOrder");
   if (!(d.usageLimit >= 0)) return say("errLimit");
+  const old = promotions.find((p) => p.id === editingId);   // a used promotion cannot go below its uses so far
+  if (old && old.used > 0 && d.usageLimit > 0 && d.usageLimit < old.used) return say("errLimitLow", { n: old.used });
   if (voucher && !d.code) return say("errCodeReq");
   if (voucher && !/^[A-Z0-9]{4,14}$/.test(d.code)) return say("errCodeFmt");
   if (voucher && promotions.some((p) => p.code === d.code && p.id !== editingId)) return say("errCodeDup");

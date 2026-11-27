@@ -77,6 +77,7 @@ const normalize = (body) => {
   const voucher = body.kind === "voucher";
   const applyTo = voucher || body.applyTo !== "SELECTED" ? "ALL" : "SELECTED";
   return {
+    id: body.id,
     kind: voucher ? "voucher" : "discount",
     name: String(body.name ?? "").trim(),
     applyTo,
@@ -100,6 +101,33 @@ const checkCodeIsFree = async (code, ownId) => {
   if (existing.length > 0 && existing[0].id !== ownId)
     throw new ValidationError(
       "That voucher code already belongs to another promotion.",
+    );
+};
+
+// Once a promotion has been used, old orders depend on it. Only the name, the
+// expiration date and the usage limit may still change.
+const checkUsedPromotionIsNotChanged = (old, d) => {
+  if (old.used <= 0) return;
+
+  const sameProducts =
+    old.productIds.length === d.productIds.length &&
+    old.productIds.every((id) => d.productIds.includes(id));
+  const changed =
+    d.type !== old.type ||
+    d.value !== old.value ||
+    d.applyTo !== old.applyTo ||
+    !sameProducts ||
+    (d.code || null) !== (old.code || null) ||
+    d.startDate !== old.startDate;
+  if (changed)
+    throw new ValidationError(
+      "This promotion was already used, so its discount, products, voucher code and start date can't be changed. You can still change the name, expiration date and usage limit.",
+      409,
+    );
+
+  if (d.usageLimit > 0 && d.usageLimit < old.used)
+    throw new ValidationError(
+      `Usage limit can't be lower than the uses so far (${old.used}).`,
     );
 };
 
@@ -139,6 +167,39 @@ export const createPromotion = async (body) => {
       );
     throw e;
   }
+};
+
+/* ---------- Update ---------- */
+export const updatePromotion = async (body) => {
+  const promotion = normalize(body);
+  const existing = await promotionModel.findPromotionById(promotion.id);
+  if (existing.length === 0)
+    throw new ValidationError("Promotion does not exist!", 404);
+
+  const products = await promotionModel.fetchProducts();
+  validatePromotion(promotion, products);
+  checkProductsExist(promotion, products);
+  checkUsedPromotionIsNotChanged(existing[0], promotion);
+  await checkCodeIsFree(promotion.code, promotion.id);
+
+  try {
+    return await promotionModel.update(promotion);
+  } catch (e) {
+    if (e.code === "ER_DUP_ENTRY")
+      throw new ValidationError(
+        "That voucher code already belongs to another promotion.",
+      );
+    throw e;
+  }
+};
+
+/* ---------- Enable / Disable ---------- */
+export const setPromotionDisabled = async (id, disabled) => {
+  const existing = await promotionModel.findPromotionById(id);
+  if (existing.length === 0)
+    throw new ValidationError("Promotion does not exist!", 404);
+
+  return await promotionModel.updateDisabled(id, Boolean(disabled));
 };
 
 /* ---------- Pricing (BRD ReqID 21 and 22) ----------

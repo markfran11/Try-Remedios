@@ -144,4 +144,7 @@
 .promo-page .modal input:not([type="checkbox"]):not([type="radio"]), .promo-page .modal select {box-sizing: border-box; height: 42px;}
 .promo-page .modal h2 {font-size: 26px;}
 .promo-page .empty span:empty {display: none;}
+.promo-page .modal input:disabled, .promo-page .modal button:disabled {opacity: .55; cursor: not-allowed;}
+.promo-page .chip input:disabled + span {opacity: .55; cursor: not-allowed;}
+.promo-page .locked-note {margin: 0 0 14px; padding: 10px 14px; border: 1px solid #d8cd9a; border-radius: 14px; background: #fbf6e4; color: #5a4a14;}
 .promo-page .overlay { z-index: 60; }

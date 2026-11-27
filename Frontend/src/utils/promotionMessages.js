@@ -2,6 +2,8 @@
 const messages = {
   // Small messages
   saved: "Promotion saved",
+  disabled: "Promotion disabled",
+  enabled: "Promotion enabled",
   loadFailed: "Unable to load promotions. Is the backend running?",
   // Popups
   titleCreate: "Create Promotion",
@@ -9,7 +11,10 @@ const messages = {
   discardText: "You have unsaved changes. If you close this form now, they will be lost.",
   discardOk: "Discard",
   discardKeep: "Keep editing",
+  titleEdit: "Edit Promotion",
   // Cards
+  disable: "Disable",
+  enable: "Enable",
   statusActive: "Active",
   statusScheduled: "Scheduled",
   statusExpired: "Expired",
@@ -59,6 +64,8 @@ const messages = {
   errDates: "Choose a start date and an expiration date.",
   errOrder: "The expiration date cannot be before the start date.",
   errLimit: "Usage limit must be 0 or more.",
+  errLimitLow: "Usage limit can’t be lower than the uses so far ({n}).",
+  lockedNote: "This promotion was already used ({n} uses), so its discount, products, voucher code and start date are locked. You can still change the name, expiration date and usage limit.",
   errCodeReq: "Enter a voucher code, or press Generate.",
   errCodeFmt: "Voucher codes use 4 to 14 letters or numbers only.",
   errCodeDup: "That voucher code already belongs to another promotion.",
