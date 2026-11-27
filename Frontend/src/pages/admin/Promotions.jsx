@@ -1,5 +1,5 @@
 import "../../promotions.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { say } from "../../utils/promotionMessages";
 import * as promotionApi from "../../api/promotionApi";
 import PromotionHeaderContainer from "../../components/PromotionHeaderContainer";
@@ -7,11 +7,20 @@ import PromotionFormContainer from "../../components/PromotionFormContainer";
 import PromotionToasts from "../../components/PromotionToasts";
 
 const Promotions = () => {
+  const [products, setProducts] = useState([]);   // for the "Apply To" picker
+  const [promotions] = useState([]);   // the list of promotions is added with 4.2.1
 
   // popups
   const [formOpen, setFormOpen] = useState(false);
   const [formError, setFormError] = useState("");
   const [toasts, setToasts] = useState([]);
+
+  useEffect(() => {
+    promotionApi
+      .getProducts()
+      .then(setProducts)
+      .catch((e) => console.log(e.message));
+  }, []);
 
   /* ---------- Small message that fades out by itself ---------- */
   const showToast = (text) => {
@@ -49,6 +58,8 @@ const Promotions = () => {
 
       {formOpen && (
         <PromotionFormContainer
+          products={products}
+          promotions={promotions}
           error={formError}
           onError={setFormError}
           onReview={save}

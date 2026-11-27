@@ -8,6 +8,16 @@ const sendError = (res, e) => {
   });
 };
 
+// products for the "Apply To" picker
+export const fetchAllProducts = async (req, res) => {
+  try {
+    const products = await promotionService.fetchAllProducts();
+    res.status(200).json(products);
+  } catch (e) {
+    sendError(res, e);
+  }
+};
+
 // Insert
 export const createPromotion = async (req, res) => {
   try {

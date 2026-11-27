@@ -2,17 +2,36 @@ import { useState } from "react";
 import { say } from "../utils/promotionMessages";
 import PromotionModal from "./PromotionModal";
 import PromotionConfirmModal from "./PromotionConfirmModal";
+import PromotionProductPicker from "./PromotionProductPicker";
 import { validate } from "../utils/promotionRules";
 
 // Create popup: the owner fills in the promotion, then it goes to the page to be saved.
-const PromotionFormContainer = ({ error, onError, onReview, onClose }) => {
+const PromotionFormContainer = ({ products, promotions, error, onError, onReview, onClose }) => {
+  const categories = [...new Set(products.map((p) => p.category).filter(Boolean))];
   const [name, setName] = useState("");
+  const [kind, setKind] = useState("discount");
+  const [cat, setCat] = useState("ALL");   // "ALL" or a category name
+  const [ids, setIds] = useState([]);
   const [type, setType] = useState("percent");
   const [value, setValue] = useState("");
+  const [code, setCode] = useState("");
+
+  const voucher = kind === "voucher";
+
+  // Generate a random voucher code (letters and numbers, no confusing 0/O or 1/I)
+  const generateCode = () => {
+    const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let c;
+    do {
+      c = "";
+      for (let i = 0; i < 8; i++) c += A[Math.floor(Math.random() * A.length)];
+    } while (promotions.some((p) => p.code === c));
+    setCode(c);
+  };
 
   // Closing: clicking the dark background does nothing, and closing a form with unsaved
   // changes (X, Cancel or Esc) asks first, so a wrong tap does not wipe what was typed.
-  const snapshot = JSON.stringify({ name, type, value });
+  const snapshot = JSON.stringify({ name, kind, cat, ids, type, value, code });
   const [savedSnapshot] = useState(snapshot);   // the values when the form opened
   const [askDiscard, setAskDiscard] = useState(false);
   const requestClose = () => {
@@ -22,12 +41,17 @@ const PromotionFormContainer = ({ error, onError, onReview, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const all = voucher || cat === "ALL";
     const data = {
+      kind,
       name: name.trim(),
+      applyTo: all ? "ALL" : "SELECTED",
+      productIds: all ? [] : ids,
       type,
       value: parseFloat(value),
+      code: voucher ? code.trim().toUpperCase() : "",
     };
-    const err = validate(data);
+    const err = validate(data, products, promotions, null);
     onError(err);
     if (!err) onReview(data);
   };
@@ -45,6 +69,32 @@ const PromotionFormContainer = ({ error, onError, onReview, onClose }) => {
           <input maxLength={40} placeholder="e.g. Native Hat Sale" autoFocus value={name} onChange={(e) => setName(e.target.value)} />
         </label>
 
+        <fieldset className="picker">
+          <legend>Promotion Kind</legend>
+          <div className="chips seg" role="radiogroup" aria-label="Promotion Kind">
+            <label className="chip"><input type="radio" name="kind" checked={kind === "discount"} onChange={() => setKind("discount")} /><span>Product discount</span></label>
+            <label className="chip"><input type="radio" name="kind" checked={kind === "voucher"} onChange={() => setKind("voucher")} /><span>Voucher code</span></label>
+          </div>
+        </fieldset>
+
+        {/* Apply To: pick a category first, then tick the products of that category */}
+        {!voucher && (
+          <fieldset className="picker">
+            <legend>Apply To</legend>
+            <div className="chips" role="radiogroup" aria-label="Category">
+              {["ALL", ...categories].map((c) => (
+                <label key={c} className="chip">
+                  <input type="radio" name="cat" value={c} checked={cat === c} onChange={() => setCat(c)} />
+                  <span>{c === "ALL" ? say("allProducts") : c}</span>
+                </label>
+              ))}
+            </div>
+            {cat === "ALL"
+              ? <p className="hint">This discount applies to every product.</p>
+              : <PromotionProductPicker key={cat} products={products} cat={cat} ids={ids} onChange={setIds} />}
+          </fieldset>
+        )}
+
         <div className="row">
           <fieldset className="picker">
             <legend>Discount Type</legend>
@@ -57,6 +107,16 @@ const PromotionFormContainer = ({ error, onError, onReview, onClose }) => {
             <input type="number" min="0" step="0.01" placeholder="e.g. 10" value={value} onChange={(e) => setValue(e.target.value)} />
           </label>
         </div>
+
+        {voucher && (
+          <label>Voucher Code
+            <span className="inline">
+              <input maxLength={14} placeholder="e.g. WELCOME50" value={code} onChange={(e) => setCode(e.target.value)} />
+              <button type="button" className="btn" onClick={generateCode}>Generate</button>
+            </span>
+            <small className="field-hint">4 to 14 letters or numbers</small>
+          </label>
+        )}
 
         <p className="error" role="alert">{error}</p>
         <div className="actions">
