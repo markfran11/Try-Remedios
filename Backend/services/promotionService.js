@@ -138,9 +138,19 @@ const checkProductsExist = (d, products) => {
 };
 
 /* ---------- Retrieve ---------- */
-export const fetchAllPromotions = async () => {
-  const promotions = await promotionModel.fetch();
-  return promotions.map((p) => ({ ...p, status: statusOf(p) }));
+// Search (name, code or ID) and filters (status, discount type) are done here, not in the page
+const formatId = (id) => "PRM-" + String(id).padStart(3, "0");
+
+export const fetchAllPromotions = async (filters = {}) => {
+  const search = String(filters.search || "").trim().toLowerCase();
+  const promotions = (await promotionModel.fetch()).map((p) => ({ ...p, status: statusOf(p) }));
+
+  return promotions.filter(
+    (p) =>
+      (!search || (formatId(p.id) + " " + p.name + " " + (p.code || "")).toLowerCase().includes(search)) &&
+      (!filters.status || p.status === filters.status) &&
+      (!filters.type || p.type === filters.type),
+  );
 };
 
 export const fetchAllProducts = async () => {
@@ -200,6 +210,23 @@ export const setPromotionDisabled = async (id, disabled) => {
     throw new ValidationError("Promotion does not exist!", 404);
 
   return await promotionModel.updateDisabled(id, Boolean(disabled));
+};
+
+/* ---------- Delete ---------- */
+export const deletePromotion = async (id) => {
+  const existing = await promotionModel.findPromotionById(id);
+  if (existing.length === 0)
+    throw new ValidationError("Promotion does not exist!", 404);
+
+  // a used promotion that is still live (Active or Scheduled) must be disabled first
+  const status = statusOf(existing[0]);
+  if (existing[0].used > 0 && status !== "Disabled" && status !== "Expired")
+    throw new ValidationError(
+      "This promotion was already used and is still live. Disable it first, then you can delete it.",
+      409,
+    );
+
+  return await promotionModel.remove(id);
 };
 
 /* ---------- Pricing (BRD ReqID 21 and 22) ----------

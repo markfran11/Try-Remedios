@@ -2,16 +2,24 @@
 const messages = {
   // Small messages
   saved: "Promotion saved",
+  deleted: "Promotion deleted",
   disabled: "Promotion disabled",
   enabled: "Promotion enabled",
   loadFailed: "Unable to load promotions. Is the backend running?",
   // Popups
   titleCreate: "Create Promotion",
+  titleEdit: "Edit Promotion",
+  delTitle: "Delete promotion?",
+  delText: "“{name}” will be removed. This cannot be undone.",
+  delUsedText: "“{name}” was used {n} times. Deleting it removes its record for good. This cannot be undone.",
+  delOk: "Delete",
+  usedTitle: "Can’t delete this promotion",
+  usedText: "“{name}” was already used (uses so far: {n}) and is still live, so disable it first. After that you can delete it. Disable it now?",
+  usedOk: "Disable",
   discardTitle: "Discard changes?",
   discardText: "You have unsaved changes. If you close this form now, they will be lost.",
   discardOk: "Discard",
   discardKeep: "Keep editing",
-  titleEdit: "Edit Promotion",
   // Cards
   disable: "Disable",
   enable: "Enable",
@@ -38,6 +46,8 @@ const messages = {
   whatDiscounts: "product discounts",
   whatVouchers: "voucher codes",
   noneTitle: "No {what} yet",
+  matchTitle: "No {what} match your search",
+  matchHint: "Try a different search or filter.",
   // Product picker
   outOfStock: "Out of stock",
   noProducts: "No products match your search.",
